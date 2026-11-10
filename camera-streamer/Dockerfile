@@ -16,17 +16,9 @@ RUN wget -qO- https://archive.raspberrypi.com/debian/raspberrypi.gpg.key | gpg -
     && rm -f camera-streamer-raspi_0.4.2.bookworm_arm64.deb \
     && rm -rf /var/lib/apt/lists/*
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 8080
 
-ENTRYPOINT ["camera-streamer"]
-CMD [ \
-    "--camera-type=libcamera", \
-    "--camera-format=YUV420", \
-    "--camera-width=1280", \
-    "--camera-height=720", \
-    "--camera-fps=30", \
-    "--camera-stream.height=720", \
-    "--camera-snapshot.height=720", \
-    "--http-listen=0.0.0.0", \
-    "--http-port=8080" \
-]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

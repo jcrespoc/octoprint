@@ -72,7 +72,8 @@ You can launch the stack immediately using the pre-built images published on Doc
        container_name: camera-streamer
        restart: unless-stopped
        privileged: true
-       network_mode: host
+       ports:
+         - "8080:8080"
        volumes:
          - /run/udev:/run/udev:ro
          - /dev/video0:/dev/video0
@@ -80,6 +81,14 @@ You can launch the stack immediately using the pre-built images published on Doc
          - /dev/shm:exec
        environment:
          - TZ=Europe/Madrid
+         - CAMERA_TYPE=libcamera      # 'libcamera' (Pi Camera) or 'v4l2' (USB webcam)
+         - CAMERA_WIDTH=1280
+         - CAMERA_HEIGHT=720
+         - CAMERA_FPS=30
+         - CAMERA_VFLIP=0             # 1 to flip vertically
+         - CAMERA_HFLIP=0             # 1 to flip horizontally
+         - ENABLE_WEBRTC=0            # 1 to enable WebRTC (requires network_mode: host)
+         - EXTRA_ARGS=                # Additional camera-streamer flags
 
    volumes:
      octoprint:
@@ -147,13 +156,31 @@ docker run -d \
   --name camera-streamer \
   --restart unless-stopped \
   --privileged \
-  --network host \
+  -p 8080:8080 \
   -v /run/udev:/run/udev:ro \
   -v /dev/video0:/dev/video0 \
   --tmpfs /dev/shm:exec \
   -e TZ=Europe/Madrid \
   jcrespoc311/camera-streamer:latest
 ```
+
+---
+
+### 📷 Camera Streamer Configuration
+
+The `camera-streamer` container can be configured using environment variables:
+
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `CAMERA_TYPE` | `libcamera` | Camera driver: `libcamera` (Raspberry Pi CSI camera) or `v4l2` (USB webcam) |
+| `CAMERA_WIDTH` | `1280` | Video width resolution (e.g. `1280`, `1920`) |
+| `CAMERA_HEIGHT` | `720` | Video height resolution (e.g. `720`, `1080`) |
+| `CAMERA_FPS` | `30` | Framerate in frames per second (e.g. `15`, `30`) |
+| `CAMERA_VFLIP` | `0` | Set to `1` to invert the video vertically |
+| `CAMERA_HFLIP` | `0` | Set to `1` to mirror the video horizontally |
+| `ENABLE_WEBRTC` | `0` | `1` to enable WebRTC/RTSP (requires `network_mode: host`); `0` disables it (ideal for `bridge` mode) |
+| `HTTP_PORT` | `8080` | Port for the HTTP stream and snapshot server |
+| `EXTRA_ARGS` | _(empty)_ | Additional flags passed directly to `camera-streamer` |
 
 ---
 
@@ -240,7 +267,8 @@ Las imágenes listas para usar están disponibles en Docker Hub bajo la cuenta `
        container_name: camera-streamer
        restart: unless-stopped
        privileged: true
-       network_mode: host
+       ports:
+         - "8080:8080"
        volumes:
          - /run/udev:/run/udev:ro
          - /dev/video0:/dev/video0
@@ -248,6 +276,14 @@ Las imágenes listas para usar están disponibles en Docker Hub bajo la cuenta `
          - /dev/shm:exec
        environment:
          - TZ=Europe/Madrid
+         - CAMERA_TYPE=libcamera      # 'libcamera' (Pi Camera) or 'v4l2' (USB webcam)
+         - CAMERA_WIDTH=1280
+         - CAMERA_HEIGHT=720
+         - CAMERA_FPS=30
+         - CAMERA_VFLIP=0             # 1 to flip vertically
+         - CAMERA_HFLIP=0             # 1 to flip horizontally
+         - ENABLE_WEBRTC=0            # 1 to enable WebRTC (requires network_mode: host)
+         - EXTRA_ARGS=                # Additional camera-streamer flags
 
    volumes:
      octoprint:
@@ -316,13 +352,31 @@ docker run -d \
   --name camera-streamer \
   --restart unless-stopped \
   --privileged \
-  --network host \
+  -p 8080:8080 \
   -v /run/udev:/run/udev:ro \
   -v /dev/video0:/dev/video0 \
   --tmpfs /dev/shm:exec \
   -e TZ=Europe/Madrid \
   jcrespoc311/camera-streamer:latest
 ```
+
+---
+
+### 📷 Configuración de Camera Streamer
+
+El contenedor `camera-streamer` se puede personalizar mediante variables de entorno:
+
+| Variable | Valor por defecto | Descripción |
+| :--- | :--- | :--- |
+| `CAMERA_TYPE` | `libcamera` | Controlador: `libcamera` (cámara CSI de Raspberry Pi) o `v4l2` (webcam USB) |
+| `CAMERA_WIDTH` | `1280` | Resolución de ancho (ej: `1280`, `1920`) |
+| `CAMERA_HEIGHT` | `720` | Resolución de alto (ej: `720`, `1080`) |
+| `CAMERA_FPS` | `30` | Tasa de fotogramas por segundo (ej: `15`, `30`) |
+| `CAMERA_VFLIP` | `0` | Establecer en `1` para voltear la imagen verticalmente |
+| `CAMERA_HFLIP` | `0` | Establecer en `1` para voltear la imagen horizontalmente |
+| `ENABLE_WEBRTC` | `0` | `1` para activar WebRTC/RTSP (requiere `network_mode: host`); `0` para desactivarlo (ideal para modo `bridge`) |
+| `HTTP_PORT` | `8080` | Puerto del servidor HTTP para stream y snapshot |
+| `EXTRA_ARGS` | _(vacío)_ | Flags adicionales pasados directamente al comando `camera-streamer` |
 
 ---
 

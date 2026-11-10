@@ -25,7 +25,8 @@ services:
     container_name: camera-streamer
     restart: unless-stopped
     privileged: true
-    network_mode: host
+    ports:
+      - "8080:8080"
     volumes:
       - /run/udev:/run/udev:ro
       - /dev/video0:/dev/video0
@@ -33,6 +34,15 @@ services:
       - /dev/shm:exec
     environment:
       - TZ=Europe/Madrid
+      - CAMERA_TYPE=libcamera # 'libcamera' (Pi Camera) or 'v4l2' (USB webcam)
+      - CAMERA_WIDTH=1280
+      - CAMERA_HEIGHT=720
+      - CAMERA_FPS=5
+      - CAMERA_VFLIP=0 # Set to 1 to flip vertically
+      - CAMERA_HFLIP=0 # Set to 1 to flip horizontally
+      - ENABLE_WEBRTC=0 # 1 to enable WebRTC (requires network_mode: host)
+      - HTTP_PORT=8080
+      - EXTRA_ARGS= # Additional camera-streamer flags
 
 volumes:
   octoprint:
